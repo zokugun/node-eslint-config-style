@@ -1,7 +1,7 @@
 {
 	"name": "@zokugun/eslint-config-style",
 	"description": "ESLint configurations for import-x, Perfectionist, and Stylistic with EditorConfig support.",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"author": {
 		"name": "Baptiste Augrain",
 		"email": "daiyam@zokugun.org"
