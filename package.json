@@ -82,7 +82,8 @@
 		}
 	},
 	"allowScripts": {
-		"@zokugun/cli-utils": true
+		"@zokugun/cli-utils": true,
+		"unrs-resolver": true
 	},
 	"keywords": []
 }
