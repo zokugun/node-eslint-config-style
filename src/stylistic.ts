@@ -1,14 +1,14 @@
-import type { Configurator, EditorConfigOptions, OptionRules } from '@zokugun/eslint-toolkit';
-import type { RuleOptions } from './typegens/stylistic.js';
+import type { CommonsRuleOptions, Configurator, EditorConfigOptions, OptionRules } from '@zokugun/eslint-toolkit';
+import type { RuleOptions as StylisticRuleOptions } from './typegens/stylistic.js';
 
 import plugin from '@stylistic/eslint-plugin';
 import { rules } from './rules/stylistic.js'
 
-type Options = OptionRules<RuleOptions>;
+type Options = OptionRules<StylisticRuleOptions | CommonsRuleOptions>;
 
 export function stylistic(options: Options = {}): Configurator {
 	return (resolve) => {
-		const ecRules: Partial<RuleOptions> = {};
+		const ecRules: Partial<StylisticRuleOptions | CommonsRuleOptions> = {};
 		const ecConfig = resolve<EditorConfigOptions>('editorconfig/*');
 
 		if(ecConfig) {
@@ -65,16 +65,39 @@ export function stylistic(options: Options = {}): Configurator {
 			}
 		}
 
-		return {
-			name: 'zokugun/stylistic/rules',
-			plugins: {
-				style: plugin,
+		const embeddedFiles = resolve<string>('embedded.sources', []).map((value) => `${value}/**`);
+		const embeddedIndent = resolve<number | 'tab'>('embedded.indent');
+
+		return [
+			{
+				name: 'zokugun/stylistic/plugin',
+				plugins: {
+					style: plugin,
+				},
 			},
-			rules: {
-				...rules,
-				...ecRules,
-				...options.rules,
+			{
+				name: 'zokugun/stylistic/rules',
+				rules: {
+					...rules,
+					...ecRules,
+					...options.rules,
+				},
 			},
-		};
+			{
+				name: 'zokugun/stylistic/embedded',
+				files: embeddedFiles,
+				rules: {
+					'style/indent': ['error', embeddedIndent],
+					'style/indent-binary-ops': ['error', embeddedIndent],
+					'style/jsx-indent-props': [
+						'error',
+						{
+							indentMode: embeddedIndent,
+							ignoreTernaryOperator: true,
+						},
+					],
+				},
+			},
+		];
 	}
 }

@@ -1,6 +1,7 @@
-import type { RuleOptions } from '../typegens/stylistic.js';
+import type { CommonsRuleOptions } from '@zokugun/eslint-toolkit';
+import type { RuleOptions as StylisticRuleOptions } from '../typegens/stylistic.js';
 
-export const rules: Partial<RuleOptions> = {
+export const rules: Partial<StylisticRuleOptions | CommonsRuleOptions> = {
 	// @TODO add a maxLength (50)
 	// 'style/array-bracket-newline': [
 	// 	'error',
@@ -113,9 +114,11 @@ export const rules: Partial<RuleOptions> = {
 		'error',
 		'beside',
 	],
+	'indent': [
+		'off',
+	],
 	'style/indent': [
-		'error',
-		'tab',
+		'off',
 	],
 	'style/indent-binary-ops': [
 		'error',

@@ -15,7 +15,10 @@ export function perfectionist(options: Options = {}): Configurator {
 			...(options.files ?? []),
 		];
 
-		const ignores = options.overrides?.ignores ?? options.ignores ?? [];
+		const ignores = options.overrides?.ignores ?? [
+			...resolve<string>('embedded.sources', []).map((value) => `${value}/**`),
+			...(options.ignores ?? []),
+		];
 
 		return {
 			name: 'zokugun/perfectionist/rules',
