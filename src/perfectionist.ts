@@ -1,14 +1,13 @@
-import type { Configurator, OptionFiles, OptionIgnores, OptionRules, OptionOverridesFiles, OptionOverridesIgnores } from '@zokugun/eslint-toolkit';
-import type { RuleOptions } from './typegens/perfectionist.js';
+import type { Configurator, DefaultOptions } from '@zokugun/eslint-toolkit';
+import type { PerfectionistRuleOptions } from './typegens/perfectionist.js';
 
 import plugin from 'eslint-plugin-perfectionist';
-import { rules } from './rules/perfectionist.js';
 
-type Options = OptionRules<RuleOptions> & OptionFiles & OptionIgnores & OptionOverridesFiles & OptionOverridesIgnores;
+import { perfectionistRules } from './rules/perfectionist.js';
 
-export function perfectionist(options: Options = {}): Configurator {
+export function perfectionist(options: DefaultOptions<PerfectionistRuleOptions> = {}): Configurator {
 	return (resolve) => {
-		const sources = resolve<string[]>('javascript.sources') ?? [];
+		const sources = resolve<string[]>('javascript/sources') ?? [];
 
 		const files = options.overrides?.files ?? [
 			...sources,
@@ -16,9 +15,14 @@ export function perfectionist(options: Options = {}): Configurator {
 		];
 
 		const ignores = options.overrides?.ignores ?? [
-			...resolve<string>('embedded.sources', []).map((value) => `${value}/**`),
+			...resolve<string>('embedded/sources', []).map((value) => `${value}/**`),
 			...(options.ignores ?? []),
 		];
+
+		const rules = options.overrides?.rules ?? {
+			...perfectionistRules,
+			...options.rules,
+		};
 
 		return {
 			name: 'zokugun/perfectionist/rules',
@@ -27,10 +31,7 @@ export function perfectionist(options: Options = {}): Configurator {
 			plugins: {
 				perfectionist: plugin,
 			},
-			rules: {
-				...rules,
-				...options.rules,
-			},
+			rules,
 		};
 	};
 }

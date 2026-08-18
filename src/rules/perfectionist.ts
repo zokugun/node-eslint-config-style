@@ -1,7 +1,7 @@
 import type { CommonsRuleOptions } from '@zokugun/eslint-toolkit';
-import type { RuleOptions } from '../typegens/perfectionist.js';
+import type { PerfectionistRuleOptions } from '../typegens/perfectionist.js';
 
-export const rules: Partial<RuleOptions | CommonsRuleOptions> = {
+export const perfectionistRules: Partial<PerfectionistRuleOptions | CommonsRuleOptions> = {
 	'perfectionist/sort-array-includes': [
 		'off',
 	],

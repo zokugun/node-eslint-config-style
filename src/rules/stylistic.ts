@@ -1,7 +1,7 @@
 import type { CommonsRuleOptions } from '@zokugun/eslint-toolkit';
-import type { RuleOptions as StylisticRuleOptions } from '../typegens/stylistic.js';
+import type { StylisticRuleOptions } from '../typegens/stylistic.js';
 
-export const rules: Partial<StylisticRuleOptions | CommonsRuleOptions> = {
+export const stylisticRules: Partial<StylisticRuleOptions | CommonsRuleOptions> = {
 	// @TODO add a maxLength (50)
 	// 'style/array-bracket-newline': [
 	// 	'error',

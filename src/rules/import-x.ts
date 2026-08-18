@@ -1,6 +1,6 @@
-import type { RuleOptions } from '../typegens/import-x.js';
+import type { ImportXRuleOptions } from '../typegens/import-x.js';
 
-export const rules: Partial<RuleOptions> = {
+export const importXRules: Partial<ImportXRuleOptions> = {
 	'import-x/extensions': [
 		'error',
 		'always',

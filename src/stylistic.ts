@@ -1,74 +1,22 @@
-import type { CommonsRuleOptions, Configurator, EditorConfigOptions, OptionRules } from '@zokugun/eslint-toolkit';
-import type { RuleOptions as StylisticRuleOptions } from './typegens/stylistic.js';
+import type { CommonsRuleOptions, Configurator, DefaultOptions } from '@zokugun/eslint-toolkit';
+import type { Linter } from 'eslint';
+import type { StylisticRuleOptions } from './typegens/stylistic.js';
 
 import plugin from '@stylistic/eslint-plugin';
-import { rules } from './rules/stylistic.js'
 
-type Options = OptionRules<StylisticRuleOptions | CommonsRuleOptions>;
+import * as editorConfig from './resolvers/editor-config.js';
+import * as embeddedIndent from './resolvers/embedded-indent.js';
+import { stylisticRules } from './rules/stylistic.js'
 
-export function stylistic(options: Options = {}): Configurator {
+export function stylistic(options: DefaultOptions<StylisticRuleOptions | CommonsRuleOptions> = {}): Configurator {
 	return (resolve) => {
-		const ecRules: Partial<StylisticRuleOptions | CommonsRuleOptions> = {};
-		const ecConfig = resolve<EditorConfigOptions>('editorconfig/*');
+		const rules = options.overrides?.rules ?? {
+			...stylisticRules,
+			...editorConfig.stylistic(resolve),
+			...options.rules,
+		};
 
-		if(ecConfig) {
-			const {
-				end_of_line,
-				insert_final_newline,
-				indent_size,
-				indent_style,
-				trim_trailing_whitespace,
-			} = ecConfig;
-
-			if(indent_style === 'space') {
-				ecRules['style/indent'] = ['error', Number(indent_size)];
-				ecRules['style/indent-binary-ops'] = ['error', Number(indent_size)];
-				ecRules['style/jsx-indent-props'] = [
-					'error',
-					{
-						indentMode: Number(indent_size),
-						ignoreTernaryOperator: true,
-					},
-				];
-			}
-			else if(indent_style === 'tab') {
-				ecRules['style/indent'] = ['error', 'tab'];
-				ecRules['style/indent-binary-ops'] = ['error', 'tab'];
-				ecRules['style/jsx-indent-props'] = [
-					'error',
-					{
-						indentMode: 'tab',
-						ignoreTernaryOperator: true,
-					},
-				];
-			}
-
-			if(insert_final_newline === 'true') {
-				ecRules['style/eol-last'] = ['error', 'always'];
-			}
-			else if(insert_final_newline === 'false') {
-				ecRules['style/eol-last'] = ['error', 'never'];
-			}
-
-			if(end_of_line === 'lf') {
-				ecRules['style/linebreak-style'] = ['error', 'unix'];
-			}
-			else if(end_of_line === 'crlf') {
-				ecRules['style/linebreak-style'] = ['error', 'windows'];
-			}
-
-			if(trim_trailing_whitespace === 'true') {
-				ecRules['style/no-trailing-spaces'] = 'error';
-			}
-			else if(trim_trailing_whitespace === 'false') {
-				ecRules['style/no-trailing-spaces'] = 'off';
-			}
-		}
-
-		const embeddedFiles = resolve<string>('embedded.sources', []).map((value) => `${value}/**`);
-		const embeddedIndent = resolve<number | 'tab'>('embedded.indent');
-
-		return [
+		const configs: Linter.Config[] = [
 			{
 				name: 'zokugun/stylistic/plugin',
 				plugins: {
@@ -77,27 +25,27 @@ export function stylistic(options: Options = {}): Configurator {
 			},
 			{
 				name: 'zokugun/stylistic/rules',
-				rules: {
-					...rules,
-					...ecRules,
-					...options.rules,
-				},
-			},
-			{
-				name: 'zokugun/stylistic/embedded',
-				files: embeddedFiles,
-				rules: {
-					'style/indent': ['error', embeddedIndent],
-					'style/indent-binary-ops': ['error', embeddedIndent],
-					'style/jsx-indent-props': [
-						'error',
-						{
-							indentMode: embeddedIndent,
-							ignoreTernaryOperator: true,
-						},
-					],
-				},
+				rules,
 			},
 		];
+
+		const embeddedFiles = resolve<string>('embedded/sources', []).map((value) => `${value}/**`);
+
+		if(embeddedFiles.length > 0) {
+			const ignores = options.embedded?.overrides?.ignores ?? options.embedded?.ignores ?? [];
+			const rules = options.embedded?.overrides?.rules ?? {
+				...embeddedIndent.stylistic(resolve),
+				...options.embedded?.rules,
+			};
+
+			configs.push({
+				name: 'zokugun/stylistic/embedded',
+				files: embeddedFiles,
+				ignores,
+				rules,
+			});
+		}
+
+		return configs;
 	}
 }
