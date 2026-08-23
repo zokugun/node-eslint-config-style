@@ -92,41 +92,41 @@ export const perfectionistRules: Partial<PerfectionistRuleOptions | CommonsRuleO
 	'sort-keys': [
 		'off',
 	],
-	// 'perfectionist/sort-objects': [
-	// 	'off',
-	// ],
 	'perfectionist/sort-objects': [
-		'error',
-		{
-			type: 'natural',
-			order: 'asc',
-			partitionByNewLine: true,
-			groups: [
-				'top',
-				'unknown',
-				{ group: 'paths', type: 'unsorted' },
-				'bottom',
-			],
-			customGroups: [
-				{
-					groupName: 'top',
-					selector: 'property',
-					elementNamePattern: '^(?:id|name|title)$',
-				},
-				{
-					groupName: 'bottom',
-					selector: 'property',
-					elementNamePattern: '^\_.*$',
-				},
-				{
-					groupName: 'paths',
-					selector: 'property',
-					elementNamePattern: '^\/.*$',
-					type: 'unsorted',
-				}
-			],
-		},
+		'off',
 	],
+	// 'perfectionist/sort-objects': [
+	// 	'error',
+	// 	{
+	// 		type: 'natural',
+	// 		order: 'asc',
+	// 		partitionByNewLine: true,
+	// 		groups: [
+	// 			'top',
+	// 			'unknown',
+	// 			{ group: 'paths', type: 'unsorted' },
+	// 			'bottom',
+	// 		],
+	// 		customGroups: [
+	// 			{
+	// 				groupName: 'top',
+	// 				selector: 'property',
+	// 				elementNamePattern: '^(?:id|name|title)$',
+	// 			},
+	// 			{
+	// 				groupName: 'bottom',
+	// 				selector: 'property',
+	// 				elementNamePattern: '^\_.*$',
+	// 			},
+	// 			{
+	// 				groupName: 'paths',
+	// 				selector: 'property',
+	// 				elementNamePattern: '^\/.*$',
+	// 				type: 'unsorted',
+	// 			}
+	// 		],
+	// 	},
+	// ],
 	'perfectionist/sort-sets': [
 		'error',
 	],
