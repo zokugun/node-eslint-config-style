@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.1 | 2026-08-23
+- disable `perfectionist/sort-objects`
+
 ## v0.3.0 | 2026-08-18
 - rename keys of shared values
 - improve support of embedded rules
